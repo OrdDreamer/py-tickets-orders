@@ -87,10 +87,10 @@ class Ticket(models.Model):
     @staticmethod
     def validate_ticket(movie_session, row, seat, exclude_instance=None):
         errors = {}
-        
+
         if not movie_session:
             return errors
-            
+
         cinema_hall = movie_session.cinema_hall
 
         if row is not None and not (1 <= row <= cinema_hall.rows):
@@ -110,7 +110,8 @@ class Ticket(models.Model):
                 movie_session=movie_session, row=row, seat=seat
             )
             if exclude_instance:
-                existing_ticket = existing_ticket.exclude(pk=exclude_instance.pk)
+                existing_ticket = existing_ticket.exclude(
+                    pk=exclude_instance.pk)
             if existing_ticket.exists():
                 errors["seat"] = (
                     f"Seat (row: {row}, seat: {seat}) is already taken "
@@ -127,11 +128,11 @@ class Ticket(models.Model):
             raise ValidationError(errors)
 
     def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None,
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None,
     ):
         self.full_clean()
         super(Ticket, self).save(

@@ -43,24 +43,23 @@ class MovieViewSet(viewsets.ModelViewSet):
     def params_to_ints(query_string):
         return [int(str_id) for str_id in query_string.split(",")]
 
-
     def get_queryset(self):
         queryset = Movie.objects.all()
-        
+
         title = self.request.query_params.get("title")
         if title:
             queryset = queryset.filter(title__icontains=title)
-        
+
         genres = self.request.query_params.get("genres")
         if genres:
             genre_ids = self.params_to_ints(genres)
             queryset = queryset.filter(genres__id__in=genre_ids).distinct()
-        
+
         actors = self.request.query_params.get("actors")
         if actors:
             actor_ids = self.params_to_ints(actors)
             queryset = queryset.filter(actors__id__in=actor_ids).distinct()
-        
+
         return queryset
 
     def get_serializer_class(self):
@@ -80,15 +79,15 @@ class MovieSessionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = MovieSession.objects.all()
-        
+
         date = self.request.query_params.get("date")
         if date:
             queryset = queryset.filter(show_time__date=date)
-        
+
         movie = self.request.query_params.get("movie")
         if movie:
             queryset = queryset.filter(movie_id=movie)
-        
+
         return queryset
 
     def get_serializer_class(self):
@@ -107,11 +106,11 @@ class OrderViewSet(viewsets.ModelViewSet):
         if user.is_authenticated:
             queryset = Order.objects.filter(user=user)
 
-            if self.action == 'list':
+            if self.action == "list":
                 return queryset.prefetch_related(
-                    'tickets',
-                    'tickets__movie_session__movie',
-                    'tickets__movie_session__cinema_hall',
+                    "tickets",
+                    "tickets__movie_session__movie",
+                    "tickets__movie_session__cinema_hall",
                 )
 
             return queryset
